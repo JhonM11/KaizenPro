@@ -1,11 +1,23 @@
 import userService from "../services/userService.js";
+import { BadRequestError, ConflictError } from "../../../utils/customErrors.js";
+
+
 
 const userController = {
-  async create(req, res) {
+  async create(req, res, next) {
     try {
-      const user = await userService.createUser(req.body);
+      const { username, role, mail, phone, state } = req.body;
+
+      // Validación básica de campos obligatorios
+      if (!username || !role || !mail) {
+        throw new BadRequestError("username, role y mail son requeridos");
+      }
+
+      // Llamada al servicio
+      const user = await userService.createUser({ username, role, mail, phone, state });
 
       res.status(201).json({
+        success: true,
         message: "Usuario creado con éxito",
         user: {
           username: user.username,
@@ -14,15 +26,12 @@ const userController = {
         },
       });
     } catch (error) {
-      console.error("Error al crear usuario:", error.message);
-
-      // Si el error es por validación, responder con 400
-      if (error.message.includes("usuario ya existe")) {
-        return res.status(400).json({ message: error.message });
+      // Si ya existe el usuario, marcamos el conflicto explícitamente
+      if (error.message.includes("ya existe")) {
+        return next(new ConflictError(error.message));
       }
 
-      // Si es cualquier otro error, mandar 500
-      res.status(500).json({ message: "Error interno al crear usuario" });
+      next(error); // delega al middleware global
     }
   },
 };

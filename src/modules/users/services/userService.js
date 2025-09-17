@@ -1,33 +1,32 @@
 import bcrypt from "bcrypt";
 import { v4 as uuidv4 } from "uuid";
 import userRepository from "../repositories/userRepository.js";
+import { ConflictError } from "../../../utils/customErrors.js";
 
 const userService = {
   async createUser(data) {
     const { username, role, state, mail, phone } = data;
 
-    // 0. Validar si el username ya existe
+    // Verificar si ya existe
     const existingUser = await userRepository.findByUsername(username);
     if (existingUser) {
-      throw new Error("❌ El nombre de usuario ya existe, elige otro.");
+      throw new ConflictError(`El usuario '${username}' ya existe`);
     }
 
-    // 1. Password por defecto = username (pero hasheado)
+    // Hashear password = username por defecto
     const hashedPassword = await bcrypt.hash(username, 10);
 
-    // 2. Armar objeto usuario
     const newUser = {
       code: uuidv4(),
       username,
       password: hashedPassword,
       role,
-      state,
+      state: state || "A",
       register_date: new Date(),
       mail,
       phone,
     };
 
-    // 3. Guardar en la BD
     return await userRepository.create(newUser);
   },
 };
