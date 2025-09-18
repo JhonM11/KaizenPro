@@ -6,9 +6,6 @@ import authRoutes from "./src/config/auth/authRoutes.js";
 import { NotFoundError } from "./src/utils/customErrors.js";
 
 
-
-
-
 // ✅ Importar centralizador
 import middlewares from "./src/middlewares/indexMiddleware.js";
 

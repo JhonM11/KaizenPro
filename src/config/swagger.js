@@ -16,8 +16,10 @@ const swaggerOptions = {
     },
     servers: [
       {
-        url: "http://localhost:3000",
-      },
+                // Usa RENDER_EXTERNAL_URL para producción o localhost para desarrollo
+                url: process.env.RENDER_EXTERNAL_URL || "http://localhost:3000",
+                description: "Servidor de producción o desarrollo",
+            },
     ],
     components: {
       securitySchemes: {
