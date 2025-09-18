@@ -1,5 +1,7 @@
 import express from "express";
 import logger from "morgan";
+import { swaggerUi, swaggerSpec } from "./src/config/swagger.js";
+
 
 import userRoutes from "./src/modules/users/routes/userRoutes.js";
 import authRoutes from "./src/config/auth/authRoutes.js";
@@ -13,6 +15,10 @@ const app = express();
 
 app.use(express.json());
 app.use(logger("dev"));
+
+
+// Ruta de documentación Swagger
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // ✅ Middleware global para validar token
 app.use(middlewares.authMiddleware.verifyToken);
