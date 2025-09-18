@@ -1,5 +1,6 @@
 import app from "./app.js";
 import sequelize from "./src/config/sequelize.js";
+import "./src/config/healthCheck.js";
 
 const PORT = process.env.PORT || 3000;
 
