@@ -3,6 +3,8 @@ import userController from "../controllers/userController.js";
 import listUsersController from "../controllers/listUsersController.js";
 import deleteUserController from "../controllers/deleteUserController.js";
 import updateUserStateController from "../controllers/updateUserStateController.js";
+import getUserContextController from "../controllers/getUserContextController.js";
+import authMiddleware from "../../../middlewares/authMiddleware.js";
 
 const router = Router();
 
@@ -227,6 +229,52 @@ router.delete("/delete", deleteUserController);
  *               message: "Error interno del servidor"
  */
 router.patch("/state", updateUserStateController);
+
+/**
+ * @swagger
+ * /api/v1/kaizenpro/user/context:
+ *   get:
+ *     summary: Obtiene el contexto del usuario autenticado
+ *     description: Retorna la información del usuario en sesión basada en el token JWT.
+ *     tags: [Users]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Información del usuario obtenida con éxito
+ *         content:
+ *           application/json:
+ *             example:
+ *               success: true
+ *               user:
+ *                 code: "03d89745-3dec-4723-83dc-f21bcdfa252d"
+ *                 username: "juanpa"
+ *                 role: "lider"
+ *                 mail: "lider@example.com"
+ *                 phone: "25689571"
+ *       401:
+ *         description: Usuario no autenticado o token inválido
+ *         content:
+ *           application/json:
+ *             example:
+ *               success: false
+ *               message: "Token inválido o expirado"
+ *       404:
+ *         description: Usuario no encontrado
+ *         content:
+ *           application/json:
+ *             example:
+ *               success: false
+ *               message: "No se encontró información del usuario"
+ *       500:
+ *         description: Error interno del servidor
+ *         content:
+ *           application/json:
+ *             example:
+ *               success: false
+ *               message: "Error interno del servidor"
+ */
+router.get("/context", authMiddleware.verifyToken, getUserContextController);
 
 
 export default router;
