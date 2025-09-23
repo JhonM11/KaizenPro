@@ -7,5 +7,8 @@ export default {
 
   privateRoutes: {
     "/api/v1/kaizenpro/user/createUser": ["admin"],  
+    "/api/v1/kaizenpro/user/list": ["admin"],  
+    "/api/v1/kaizenpro/user/delete/**": ["admin"],  
+    "/api/v1/kaizenpro/user/state/**": ["admin"],  
   }
 };
