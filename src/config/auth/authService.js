@@ -20,6 +20,7 @@ const authService = {
     // 3. Generar token JWT
     const token = jwt.sign(
       {
+        code: user.code,
         username: user.username,
         role: user.role,
       },

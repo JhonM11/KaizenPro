@@ -35,6 +35,20 @@ const swaggerOptions = {
         bearerAuth: [],
       },
     ],
+    tags: [
+      {
+        name: "Auth",
+        description: "Endpoints de autenticación y login",
+      },
+      {
+        name: "Users",
+        description: "Gestión de usuarios",
+      },
+      {
+        name: "TypeObjectives",
+        description: "API para gestionar los tipos de objetivos",
+      },
+    ],
   },
   apis: [
   "./src/modules/**/*.js",     // Rutas y controladores de los módulos
