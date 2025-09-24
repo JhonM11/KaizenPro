@@ -15,6 +15,11 @@ export default {
     //    
     "/api/v1/kaizenpro/type-objectives/createTypeObjective": ["admin"],  
     "/api/v1/kaizenpro/type-objectives/listAllTypeObjective": ["admin"],  
-    "/api/v1/kaizenpro/type-objectives/updateNameTypeObjective": ["admin"],  
+    "/api/v1/kaizenpro/type-objectives/updateNameTypeObjective": ["admin"], 
+    // 
+    "/api/v1/kaizenpro/timeframes/createTimeframe": ["admin"], 
+    "/api/v1/kaizenpro/timeframes/listTimeframes": ["admin"], 
+    "/api/v1/kaizenpro/timeframes/updateTimeframeName": ["admin"], 
+    "/api/v1/kaizenpro/timeframes/updateTimeframeExtensionDate": ["admin"], 
   }
 };

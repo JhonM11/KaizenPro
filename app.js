@@ -4,6 +4,7 @@ import { swaggerUi, swaggerSpec } from "./src/config/swagger.js";
 import userRoutes from "./src/modules/users/routes/userRoutes.js";
 import authRoutes from "./src/config/auth/authRoutes.js";
 import typeObjectivesRoutes from "./src/modules/type_objectives/routes/typeObjectiveRoutes.js";
+import timeframeRoutes from "./src/modules/timeframes/routes/timeframeRoutes.js";
 import { NotFoundError } from "./src/utils/customErrors.js";
 
 
@@ -33,6 +34,7 @@ app.use(middlewares.authMiddleware.verifyToken);
 app.use("/api/v1/kaizenpro/user", userRoutes);
 app.use("/api/v1/kaizenpro/auth", authRoutes);
 app.use("/api/v1/kaizenpro/type-objectives", typeObjectivesRoutes);
+app.use("/api/v1/kaizenpro/timeframes", timeframeRoutes);
 
 
 

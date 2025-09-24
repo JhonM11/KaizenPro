@@ -37,7 +37,7 @@ const Timeframe = sequelize.define(
     },
   },
   {
-    tableName: "timeframes", // 👈 asegura el nombre exacto de la tabla
+    tableName: "timeframes", //  asegura el nombre exacto de la tabla
     timestamps: false, // no usaremos createdAt/updatedAt automáticos
   }
 );

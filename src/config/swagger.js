@@ -48,6 +48,10 @@ const swaggerOptions = {
         name: "TypeObjectives",
         description: "API para gestionar los tipos de objetivos",
       },
+      {
+        name: "Timeframes",
+        description: "API para gestionar los periodos de tiempo",
+      },
     ],
   },
   apis: [
