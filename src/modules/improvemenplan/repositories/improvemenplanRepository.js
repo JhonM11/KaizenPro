@@ -1,5 +1,5 @@
 // src/modules/improvementplan/repositories/improvementplan.repository.js
-import ImprovementPlan from "../models/improvementplanModel.js";
+import ImprovementPlan from "../models/improvemenplanModel.js";
 import User from "../../users/models/userModel.js";
 import Timeframe from "../../timeframes/models/timeframesModel.js";
 
@@ -14,39 +14,13 @@ class ImprovementPlanRepository {
         { model: User, as: "user", attributes: ["id", "code", "username"] },
         { model: Timeframe, as: "timeframe", attributes: ["id", "code", "name"] },
       ],
+      order: [["code", "ASC"]],
     });
   }
 
-  async findById(id) {
-    return await ImprovementPlan.findByPk(id, {
-      include: [
-        { model: User, as: "user", attributes: ["id", "code", "username"] },
-        { model: Timeframe, as: "timeframe", attributes: ["id", "code", "name"] },
-      ],
-    });
-  }
-
-  async findByCode(code) {
-    return await ImprovementPlan.findOne({
-      where: { code },
-      include: [
-        { model: User, as: "user", attributes: ["id", "code", "username"] },
-        { model: Timeframe, as: "timeframe", attributes: ["id", "code", "name"] },
-      ],
-    });
-  }
-
-  async update(id, data) {
-    const plan = await ImprovementPlan.findByPk(id);
-    if (!plan) return null;
-    return await plan.update(data);
-  }
-
-  async delete(id) {
-    const plan = await ImprovementPlan.findByPk(id);
-    if (!plan) return null;
-    await plan.destroy();
-    return plan;
+  async findMaxCode() {
+    const max = await ImprovementPlan.max("code");
+    return max || 0;
   }
 }
 

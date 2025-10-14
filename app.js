@@ -5,6 +5,7 @@ import userRoutes from "./src/modules/users/routes/userRoutes.js";
 import authRoutes from "./src/config/auth/authRoutes.js";
 import typeObjectivesRoutes from "./src/modules/type_objectives/routes/typeObjectiveRoutes.js";
 import timeframeRoutes from "./src/modules/timeframes/routes/timeframeRoutes.js";
+import improvementPlanRoutes from "./src/modules/improvemenplan/routes/improvementPlanRoutes.js";
 import { NotFoundError } from "./src/utils/customErrors.js";
 
 
@@ -35,6 +36,7 @@ app.use("/api/v1/kaizenpro/user", userRoutes);
 app.use("/api/v1/kaizenpro/auth", authRoutes);
 app.use("/api/v1/kaizenpro/type-objectives", typeObjectivesRoutes);
 app.use("/api/v1/kaizenpro/timeframes", timeframeRoutes);
+app.use("/api/v1/kaizenpro/improvementplan", improvementPlanRoutes)
 
 
 

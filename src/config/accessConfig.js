@@ -21,5 +21,9 @@ export default {
     "/api/v1/kaizenpro/timeframes/listTimeframes": ["admin"], 
     "/api/v1/kaizenpro/timeframes/updateTimeframeName": ["admin"], 
     "/api/v1/kaizenpro/timeframes/updateTimeframeExtensionDate": ["admin"], 
+    //
+    "/api/v1/kaizenpro/improvementplan/createImprovementPlan": ["admin"], 
+    "/api/v1/kaizenpro/improvementplan/listImprovementPlans": ["admin"],
+    "/api/v1/kaizenpro/improvementplan/finalizeImprovementPlan/**": ["admin"], 
   }
 };

@@ -33,7 +33,7 @@ const ImprovementPlan = sequelize.define(
       type: DataTypes.CHAR(1),
       allowNull: false,
       validate: {
-        isIn: [["P", "D"]], // P: Pendiente, D: Desarrollado
+        isIn: [["P", "F"]], // P: Pendiente, D: Desarrollado
       },
     },
     register_date_create: {
