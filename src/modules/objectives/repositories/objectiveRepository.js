@@ -2,51 +2,57 @@
 import Objective from "../models/objectiveModel.js";
 import ImprovementPlan from "../../improvemenplan/models/improvemenplanModel.js";
 import TypeObjective from "../../type_objectives/models/type_objectiveModel.js";
+import { NotFoundError, InternalServerError } from "../../../utils/customErrors.js";
 
 class ObjectiveRepository {
   async create(data) {
-    return await Objective.create(data);
+    try {
+      return await Objective.create(data);
+    } catch (error) {
+      // Re-lanzar como error controlado para que servicio lo capture
+      throw new InternalServerError("Error al crear el objetivo en la base de datos");
+    }
   }
 
   async findAll() {
-    return await Objective.findAll({
-      include: [
-        { model: ImprovementPlan, as: "improvementPlan", attributes: ["id", "code", "title"] },
-        { model: TypeObjective, as: "typeObjective", attributes: ["id", "code", "name"] },
-      ],
-    });
-  }
-
-  async findById(id) {
-    return await Objective.findByPk(id, {
-      include: [
-        { model: ImprovementPlan, as: "improvementPlan", attributes: ["id", "code", "title"] },
-        { model: TypeObjective, as: "typeObjective", attributes: ["id", "code", "name"] },
-      ],
-    });
+    try {
+      return await Objective.findAll({
+        include: [
+          { model: ImprovementPlan, as: "improvementPlan", attributes: ["id", "code", "title"] },
+          { model: TypeObjective, as: "typeObjective", attributes: ["id", "code", "name"] },
+        ],
+        order: [["code", "ASC"]],
+      });
+    } catch (error) {
+      throw new InternalServerError("Error al obtener la lista de objetivos");
+    }
   }
 
   async findByCode(code) {
-    return await Objective.findOne({
-      where: { code },
-      include: [
-        { model: ImprovementPlan, as: "improvementPlan", attributes: ["id", "code", "title"] },
-        { model: TypeObjective, as: "typeObjective", attributes: ["id", "code", "name"] },
-      ],
-    });
+    try {
+      const obj = await Objective.findOne({
+        where: { code },
+        include: [
+          { model: ImprovementPlan, as: "improvementPlan", attributes: ["id", "code", "title"] },
+          { model: TypeObjective, as: "typeObjective", attributes: ["id", "code", "name"] },
+        ],
+      });
+      if (!obj) throw new NotFoundError("El objetivo no existe");
+      return obj;
+    } catch (err) {
+      if (err instanceof NotFoundError) throw err;
+      throw new InternalServerError("Error al buscar el objetivo por código");
+    }
   }
 
-  async update(id, data) {
-    const objective = await Objective.findByPk(id);
-    if (!objective) return null;
-    return await objective.update(data);
-  }
-
-  async delete(id) {
-    const objective = await Objective.findByPk(id);
-    if (!objective) return null;
-    await objective.destroy();
-    return objective;
+  async getMaxCode() {
+    try {
+      // devuelve el max code o 0 si no hay registros
+      const max = await Objective.max("code");
+      return max || 0;
+    } catch (error) {
+      throw new InternalServerError("Error al obtener el siguiente código para objetivos");
+    }
   }
 }
 

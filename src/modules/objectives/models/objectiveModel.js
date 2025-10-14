@@ -45,9 +45,13 @@ const Objective = sequelize.define(
       type: DataTypes.DATE,
       allowNull: true,
     },
-    code_user_completed: {
+    code_user_create: {
       type: DataTypes.UUID,
       allowNull: false,
+    },
+    code_user_completed: {
+      type: DataTypes.UUID,
+      allowNull: true,
     },
   },
   {
@@ -56,11 +60,7 @@ const Objective = sequelize.define(
   }
 );
 
-/**
- * 🔗 Relaciones
- * - code_improvement → ImprovementPlan.code (1:N)
- * - code_type → TypeObjective.code (N:1)
- */
+// Relaciones (sólo para incluir datos en consultas)
 Objective.belongsTo(ImprovementPlan, {
   foreignKey: "code_improvement",
   targetKey: "code",

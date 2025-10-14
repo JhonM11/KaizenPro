@@ -25,5 +25,9 @@ export default {
     "/api/v1/kaizenpro/improvementplan/createImprovementPlan": ["admin"], 
     "/api/v1/kaizenpro/improvementplan/listImprovementPlans": ["admin"],
     "/api/v1/kaizenpro/improvementplan/finalizeImprovementPlan/**": ["admin"], 
+    //
+    "/api/v1/kaizenpro/objectives/listObjectives": ["admin"], 
+    "/api/v1/kaizenpro/objectives/createObjective": ["admin"], 
+    "/api/v1/kaizenpro/objectives/finalize": ["admin"], 
   }
 };
