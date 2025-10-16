@@ -7,6 +7,7 @@ import typeObjectivesRoutes from "./src/modules/type_objectives/routes/typeObjec
 import timeframeRoutes from "./src/modules/timeframes/routes/timeframeRoutes.js";
 import improvementPlanRoutes from "./src/modules/improvemenplan/routes/improvementPlanRoutes.js";
 import objectivesRoutes from "./src/modules/objectives/routes/objectivesRoutes.js";
+import actionsRoutes from "./src/modules/actions/routes/actionsRoutes.js";
 
 import { NotFoundError } from "./src/utils/customErrors.js";
 
@@ -40,6 +41,8 @@ app.use("/api/v1/kaizenpro/type-objectives", typeObjectivesRoutes);
 app.use("/api/v1/kaizenpro/timeframes", timeframeRoutes);
 app.use("/api/v1/kaizenpro/improvementplan", improvementPlanRoutes)
 app.use("/api/v1/kaizenpro/objectives", objectivesRoutes);
+app.use("/api/v1/kaizenpro/actions", actionsRoutes);
+
 
 
 

@@ -22,6 +22,20 @@ class ImprovementPlanRepository {
     const max = await ImprovementPlan.max("code");
     return max || 0;
   }
+
+    // 🔍 Agregar este método
+  async findByCode(code) {
+    return await ImprovementPlan.findOne({
+      where: { code },
+      include: [
+        { model: User, as: "user", attributes: ["id", "code", "username"] },
+        { model: Timeframe, as: "timeframe", attributes: ["id", "code", "name"] },
+      ],
+    });
+  }
+
 }
+
+
 
 export default new ImprovementPlanRepository();

@@ -1,33 +1,27 @@
-// src/repositories/action.repository.js
+// src/modules/actions/repositories/actionsRepository.js
 import { Action } from "../models/actionsModel.js";
 
 export const ActionRepository = {
-  async create(actionData) {
-    return await Action.create(actionData);
+  async create(data) {
+    return await Action.create(data);
   },
 
   async findAll() {
     return await Action.findAll({ include: ["objective"] });
   },
 
-  async findById(id) {
-    return await Action.findByPk(id, { include: ["objective"] });
-  },
-
   async findByCode(code) {
     return await Action.findOne({ where: { code }, include: ["objective"] });
   },
 
-  async updateById(id, updateData) {
-    const action = await Action.findByPk(id);
-    if (!action) return null;
-    return await action.update(updateData);
+  async getNextCode() {
+    const lastAction = await Action.findOne({
+      order: [["code", "DESC"]],
+    });
+    return lastAction ? lastAction.code + 1 : 1;
   },
 
-  async deleteById(id) {
-    const action = await Action.findByPk(id);
-    if (!action) return null;
-    await action.destroy();
-    return action;
+  async save(action) {
+    return await action.save();
   },
 };

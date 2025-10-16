@@ -29,5 +29,9 @@ export default {
     "/api/v1/kaizenpro/objectives/listObjectives": ["admin"], 
     "/api/v1/kaizenpro/objectives/createObjective": ["admin"], 
     "/api/v1/kaizenpro/objectives/finalize": ["admin"], 
+    //
+    "/api/v1/kaizenpro/actions/listActions": ["admin"], 
+    "/api/v1/kaizenpro/actions/createAction": ["admin"], 
+    "/api/v1/kaizenpro/actions/finalize": ["admin"], 
   }
 };
