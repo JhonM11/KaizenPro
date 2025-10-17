@@ -1,10 +1,13 @@
+// server.js
 import app from "./app.js";
+import http from "http";
 import sequelize from "./src/config/sequelize.js";
 import "./src/config/healthCheck.js";
+import { initDashboardSocket } from "./src/modules/dashboard/sockets/dashboardSocket.js";
 
 const PORT = process.env.PORT || 3000;
 
-//  importa aquí los modelos
+// Modelos
 import "./src/modules/users/models/userModel.js";
 import "./src/modules/timeframes/models/timeframesModel.js";
 import "./src/modules/improvemenplan/models/improvemenplanModel.js";
@@ -13,19 +16,22 @@ import "./src/modules/objectives/models/objectiveModel.js";
 import "./src/modules/progress/models/progressModel.js";
 import "./src/modules/actions/models/actionsModel.js";
 
-
 const startServer = async () => {
   try {
-    // Probar conexión a la BD
     await sequelize.authenticate();
     console.log("✅ Conexión establecida con PostgreSQL");
 
-    // Crear tablas si no existen
     await sequelize.sync({ alter: true });
     console.log("✅ Tablas sincronizadas");
 
-    // Levantar servidor
-    app.listen(PORT, () => {
+    // Crear servidor HTTP
+    const server = http.createServer(app);
+
+    // Inicializar Socket.IO
+    const io = initDashboardSocket(server);
+    console.log("📡 Socket.IO inicializado correctamente");
+
+    server.listen(PORT, () => {
       console.log(`🚀 Servidor corriendo en http://localhost:${PORT}`);
     });
   } catch (error) {
