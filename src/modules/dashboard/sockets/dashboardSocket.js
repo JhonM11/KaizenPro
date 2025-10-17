@@ -2,9 +2,10 @@
 import { Server } from "socket.io";
 import jwt from "jsonwebtoken";
 import { getDashboardData } from "../services/dashboardService.js";
+import { setSocketServerInstance } from "../../../config/socket.js";
 
 export const initDashboardSocket = (httpServer) => {
-  // Inicializar Socket.IO
+  // 🔹 Inicializamos Socket.IO con CORS habilitado
   const io = new Server(httpServer, {
     cors: {
       origin: "*",
@@ -12,26 +13,32 @@ export const initDashboardSocket = (httpServer) => {
     },
   });
 
-  // Namespace dedicado (recomendado para organización)
+  // 🔹 Guardamos la instancia global (para emitir desde servicios)
+  setSocketServerInstance(io);
+
+  console.log("📊 Socket.IO inicializado → Namespace: /api/v1/kaizenpro/dashboard");
+
+  // ===============================================================
+  // NAMESPACE: /api/v1/kaizenpro/dashboard
+  // ===============================================================
   const dashboardNamespace = io.of("/api/v1/kaizenpro/dashboard");
 
-  console.log("📊 Socket.IO del dashboard activo en /api/v1/kaizenpro/dashboard");
-
-  // Middleware JWT (válido para Postman o frontend)
+  // 🔸 Middleware de autenticación JWT usando encabezado Authorization
   dashboardNamespace.use((socket, next) => {
-    const token =
-      socket.handshake.auth?.token || // si viene del frontend
-      socket.handshake.headers?.authorization?.split(" ")[1] || // si viene en header
-      socket.handshake.query?.token; // si viene por query (Postman)
-
-    if (!token) {
-      return next(new Error("No autorizado: falta token"));
-    }
-
     try {
+      // El token vendrá en los headers del handshake
+      const authHeader = socket.handshake.headers["authorization"];
+
+      if (!authHeader || !authHeader.startsWith("Bearer ")) {
+        return next(new Error("No autorizado: falta o formato inválido del token"));
+      }
+
+      const token = authHeader.split(" ")[1]; // Extraer el token real
+
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
       socket.user = decoded;
 
+      // Validar roles permitidos
       const allowedRoles = ["admin", "lider", "colaborador"];
       if (!allowedRoles.includes(decoded.role)) {
         return next(new Error("Acceso denegado: rol inválido"));
@@ -39,11 +46,11 @@ export const initDashboardSocket = (httpServer) => {
 
       next();
     } catch (err) {
-      return next(new Error("Token inválido o expirado"));
+      next(new Error("Token inválido o expirado"));
     }
   });
 
-  // Evento de conexión
+  // 🔸 Evento cuando un cliente se conecta
   dashboardNamespace.on("connection", async (socket) => {
     console.log(`✅ Cliente conectado al dashboard: ${socket.user.username}`);
 
@@ -52,15 +59,16 @@ export const initDashboardSocket = (httpServer) => {
         const data = await getDashboardData();
         socket.emit("dashboard:update", data);
       } catch (error) {
-        socket.emit("dashboard:error", { message: "Error al obtener datos" });
+        console.error("❌ Error al enviar datos del dashboard:", error.message);
+        socket.emit("dashboard:error", { message: "Error al obtener datos del dashboard" });
       }
     };
 
-    // Enviar inmediatamente
+    // Enviar datos iniciales
     await sendData();
 
-    // Actualizar cada 3 segundos
-    const interval = setInterval(sendData, 3000);
+    // Enviar datos periódicos cada 30 segundos
+    //const interval = setInterval(sendData, 30000);
 
     socket.on("disconnect", () => {
       console.log(`❌ Cliente desconectado: ${socket.user.username}`);

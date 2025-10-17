@@ -2,6 +2,15 @@ import sequelize from "../../../config/sequelize.js";
 
 export const getDashboardData = async () => {
   try {
+
+    const [users] = await sequelize.query(`
+      SELECT 'Total de Usuarios' as concepto, count(*) as cantidad FROM USERS
+      UNION ALL
+      SELECT  'Total de Usuarios Activos' as concepto, count(*) as cantidad FROM USERS where state = 'A'
+      UNION ALL
+      SELECT  'Total de Usuarios Inactivos' as concepto, count(*) as cantidad FROM USERS where state = 'I'
+    `);
+
     const [improvementData] = await sequelize.query(`
       SELECT 'Total de planes' as concepto, count(*) as cantidad FROM improvemenplan
       UNION ALL
@@ -26,7 +35,15 @@ export const getDashboardData = async () => {
       SELECT 'Total de Acciones Desarrolladas' as concepto, count(*) as cantidad FROM actions WHERE state = 'D'
     `);
 
-    return { improvementData, objectivesData, actionsData };
+    const [timeFrames] = await sequelize.query(`
+      SELECT 'Total de TimeFrames' as concepto, count(*) as cantidad FROM timeframes
+    `);
+
+    const [typeObjectives] = await sequelize.query(`
+      SELECT 'Total de Tipo Objetivos' as concepto, count(*) as cantidad FROM timeframes
+    `);
+
+    return { users, improvementData, objectivesData, actionsData, timeFrames, typeObjectives };
   } catch (error) {
     console.error("❌ Error al obtener datos del dashboard:", error);
     throw error;

@@ -3,6 +3,7 @@ import objectiveRepository from "../repositories/objectiveRepository.js";
 import ImprovementPlan from "../../improvemenplan/models/improvemenplanModel.js";
 import TypeObjective from "../../type_objectives/models/type_objectiveModel.js";
 import { NotFoundError, BadRequestError } from "../../../utils/customErrors.js";
+import { emitDashboardUpdate } from "../../dashboard/utils/dashboardEmitter.js";
 
 const createObjectiveService = async (payload, req) => {
   const { code_improvement, code_type, body } = payload;
@@ -37,6 +38,11 @@ const createObjectiveService = async (payload, req) => {
     code_user_create: user.code,
     code_user_completed: null,
   });
+
+
+  // Emitir evento de actualización al socket
+  await emitDashboardUpdate();
+  
 
   return newObj;
 };
