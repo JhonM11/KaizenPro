@@ -26,19 +26,16 @@ export const initDashboardSocket = (httpServer) => {
   // 🔸 Middleware de autenticación JWT usando encabezado Authorization
   dashboardNamespace.use((socket, next) => {
     try {
-      // El token vendrá en los headers del handshake
       const authHeader = socket.handshake.headers["authorization"];
 
       if (!authHeader || !authHeader.startsWith("Bearer ")) {
         return next(new Error("No autorizado: falta o formato inválido del token"));
       }
 
-      const token = authHeader.split(" ")[1]; // Extraer el token real
-
+      const token = authHeader.split(" ")[1];
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
       socket.user = decoded;
 
-      // Validar roles permitidos
       const allowedRoles = ["admin", "lider", "colaborador"];
       if (!allowedRoles.includes(decoded.role)) {
         return next(new Error("Acceso denegado: rol inválido"));
@@ -64,15 +61,16 @@ export const initDashboardSocket = (httpServer) => {
       }
     };
 
-    // Enviar datos iniciales
+    // 🔹 Enviar datos iniciales al conectar
     await sendData();
 
-    // Enviar datos periódicos cada 30 segundos
-    //const interval = setInterval(sendData, 30000);
-
+    // 🔹 Evento de desconexión
     socket.on("disconnect", () => {
-      console.log(`❌ Cliente desconectado: ${socket.user.username}`);
-      clearInterval(interval);
+      const horaDesconexion = new Date().toLocaleString("es-CO", {
+        hour12: true,
+        timeZone: "America/Bogota",
+      });
+      console.log(`❌ Cliente desconectado: ${socket.user.username} a las ${horaDesconexion}`);
     });
   });
 
