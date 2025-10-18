@@ -40,7 +40,7 @@ export const getDashboardData = async () => {
     `);
 
     const [typeObjectives] = await sequelize.query(`
-      SELECT 'Total de Tipo Objetivos' as concepto, count(*) as cantidad FROM timeframes
+      SELECT 'Total de Tipo Objetivos' as concepto, count(*) as cantidad FROM type_objectives
     `);
 
     return { users, improvementData, objectivesData, actionsData, timeFrames, typeObjectives };

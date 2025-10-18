@@ -5,6 +5,7 @@ import {
   ResourceNotFoundError,
   InternalServerError,
 } from "../../../utils/customErrors.js";
+import { emitDashboardUpdate } from "../../dashboard/utils/dashboardEmitter.js";
 
 const finalizeActionService = async (code, userCode) => {
   try {
@@ -23,6 +24,9 @@ const finalizeActionService = async (code, userCode) => {
     action.code_user_completed = userCode;
 
     await ActionRepository.save(action);
+
+    // Emitir evento a websocket
+    await emitDashboardUpdate();
 
     return action;
   } catch (error) {

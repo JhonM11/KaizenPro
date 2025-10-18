@@ -6,6 +6,7 @@ import {
   DependencyError,
   InternalServerError,
 } from "../../../utils/customErrors.js";
+import { emitDashboardUpdate } from "../../dashboard/utils/dashboardEmitter.js";
 
 const createActionService = async (payload, userCode) => {
   try {
@@ -39,6 +40,9 @@ const createActionService = async (payload, userCode) => {
       code_user: userCode,
       code_user_completed: null,
     });
+
+    //Emitir evento a websocket
+    await emitDashboardUpdate();
 
     return newAction;
   } catch (error) {

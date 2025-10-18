@@ -2,6 +2,7 @@ import bcrypt from "bcrypt";
 import { v4 as uuidv4 } from "uuid";
 import userRepository from "../repositories/userRepository.js";
 import { ConflictError } from "../../../utils/customErrors.js";
+import { emitDashboardUpdate } from "../../dashboard/utils/dashboardEmitter.js";
 
 const userService = {
   async createUser(data) {
@@ -27,8 +28,24 @@ const userService = {
       phone,
     };
 
-    return await userRepository.create(newUser);
+
+     
+    const createdUser = await userRepository.create(newUser);
+
+
+    // 4️⃣ Emitir evento al dashboard después del éxito
+    try {
+      await emitDashboardUpdate();
+    } catch (error) {
+      console.error("⚠️ Error al emitir actualización de dashboard (createUser):", error.message);
+    }
+
+    return createdUser;
   },
+
+  
 };
+
+
 
 export default userService;

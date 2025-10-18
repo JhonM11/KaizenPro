@@ -2,6 +2,7 @@
 
 import ObjectiveRepository from "../repositories/objectiveRepository.js";
 import { NotFoundError, ConflictError } from "../../../utils/customErrors.js";
+import { emitDashboardUpdate } from "../../dashboard/utils/dashboardEmitter.js";
 
 const finalizeObjectiveService = async (code, userCode) => {
   const objective = await ObjectiveRepository.findByCode(code);
@@ -21,6 +22,9 @@ const finalizeObjectiveService = async (code, userCode) => {
   objective.code_user_completed = userCode;
 
   await objective.save();
+
+  //Emitir evento a websocket
+  await emitDashboardUpdate();
 
   return objective;
 };

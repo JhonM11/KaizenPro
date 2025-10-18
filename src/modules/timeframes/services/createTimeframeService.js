@@ -2,6 +2,7 @@
 import TimeframeRepository from "../repositories/timeframesRepository.js";
 import TimeframeListDTO from "../dtos/timeframeListDTO.js";
 import { validateCreateTimeframePayload } from "../payloads/createTimeframePayload.js";
+import { emitDashboardUpdate } from "../../dashboard/utils/dashboardEmitter.js";
 
 const createTimeframeService = async (payload, user) => {
   const data = validateCreateTimeframePayload(payload);
@@ -16,6 +17,10 @@ const createTimeframeService = async (payload, user) => {
     extension_date: null,
     code_user_register: user.code,
   });
+
+
+  //Emitir evento a websocket
+  await emitDashboardUpdate();
 
   return new TimeframeListDTO(newTimeframe);
 };

@@ -2,6 +2,7 @@
 import TypeObjectiveRepository from "../repositories/typeObjectiveRepository.js";
 import TypeObjectiveListDTO from "../dtos/typeObjectiveListDTO.js";
 import { ConflictError, BadRequestError } from "../../../utils/customErrors.js";
+import { emitDashboardUpdate } from "../../dashboard/utils/dashboardEmitter.js";
 
 const createTypeObjectiveService = async (name, user) => {
   if (!name) {
@@ -25,6 +26,10 @@ const createTypeObjectiveService = async (name, user) => {
     register_date: new Date(),
     code_user_create: user.code,
   });
+
+  // Emitir evento a websocket
+  await emitDashboardUpdate();
+
 
   return new TypeObjectiveListDTO(newTypeObjective);
 };

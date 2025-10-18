@@ -4,6 +4,7 @@ import Timeframe from "../../timeframes/models/timeframesModel.js";
 import { validateCreateImprovementPlanPayload } from "../payloads/createImprovementPlanPayload.js";
 import ImprovementPlanCreateResponseDTO from "../dtos/improvementPlanCreateResponseDTO.js";
 import { NotFoundError } from "../../../utils/customErrors.js";
+import { emitDashboardUpdate } from "../../dashboard/utils/dashboardEmitter.js";
 
 const createImprovementPlanService = async (payload, user) => {
   const data = validateCreateImprovementPlanPayload(payload);
@@ -30,6 +31,9 @@ const createImprovementPlanService = async (payload, user) => {
     code_user: user.code,
     code_timeframes: data.code_timeframes,
   });
+
+  // Emitir evento a websocket
+  await emitDashboardUpdate();
 
 return new ImprovementPlanCreateResponseDTO(newPlan);
 

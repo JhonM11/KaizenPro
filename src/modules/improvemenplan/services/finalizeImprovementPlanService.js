@@ -1,6 +1,7 @@
 // src/modules/improvementplan/services/finalizeImprovementPlanService.js
 import ImprovementPlan from "../models/improvemenplanModel.js";
 import { NotFoundError, ConflictError } from "../../../utils/customErrors.js";
+import { emitDashboardUpdate } from "../../dashboard/utils/dashboardEmitter.js";
 
 const finalizeImprovementPlanService = async (code) => {
   const plan = await ImprovementPlan.findOne({ where: { code } });
@@ -13,6 +14,9 @@ const finalizeImprovementPlanService = async (code) => {
   plan.state_improvement = "F";
   plan.final_date = new Date();
   await plan.save();
+
+  //Emitir evento a websocket
+  await emitDashboardUpdate();
 
   return plan;
 };
