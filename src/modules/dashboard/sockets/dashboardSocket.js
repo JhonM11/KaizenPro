@@ -32,29 +32,30 @@ export const initDashboardSocket = (httpServer) => {
   // ===============================================================
   const dashboardNamespace = io.of("/api/v1/kaizenpro/dashboard");
 
-  // 🔸 Middleware de autenticación JWT usando encabezado Authorization
-  dashboardNamespace.use((socket, next) => {
-    try {
-      const authHeader = socket.handshake.headers["authorization"];
+  // 🔸 Middleware de autenticación JWT usando token en query string
+dashboardNamespace.use((socket, next) => {
+  try {
+    // Obtener token desde query string (?token=xxx)
+    const token = socket.handshake.query.token;
 
-      if (!authHeader || !authHeader.startsWith("Bearer ")) {
-        return next(new Error("No autorizado: falta o formato inválido del token"));
-      }
-
-      const token = authHeader.split(" ")[1];
-      const decoded = jwt.verify(token, process.env.JWT_SECRET);
-      socket.user = decoded;
-
-      const allowedRoles = ["admin", "lider", "colaborador"];
-      if (!allowedRoles.includes(decoded.role)) {
-        return next(new Error("Acceso denegado: rol inválido"));
-      }
-
-      next();
-    } catch (err) {
-      next(new Error("Token inválido o expirado"));
+    if (!token) {
+      return next(new Error("No autorizado: token ausente en la conexión"));
     }
-  });
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    socket.user = decoded;
+
+    // Verificar roles permitidos
+    const allowedRoles = ["admin", "lider", "colaborador"];
+    if (!allowedRoles.includes(decoded.role)) {
+      return next(new Error("Acceso denegado: rol inválido"));
+    }
+
+    next();
+  } catch (err) {
+    next(new Error("Token inválido o expirado"));
+  }
+});
 
   // 🔸 Evento cuando un cliente se conecta
   dashboardNamespace.on("connection", async (socket) => {
