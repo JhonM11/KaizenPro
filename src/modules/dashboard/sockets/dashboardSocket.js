@@ -5,18 +5,27 @@ import { getDashboardData } from "../services/dashboardService.js";
 import { setSocketServerInstance } from "../../../config/socket.js";
 
 export const initDashboardSocket = (httpServer) => {
-  // 🔹 Inicializamos Socket.IO con CORS habilitado
+  // 🌍 Detectar entorno y construir la URL base del socket
+  const baseSocketURL =
+    process.env.RENDER_EXTERNAL_URL
+      ? `${process.env.RENDER_EXTERNAL_URL.replace(/^http/, "ws")}/api/v1/kaizenpro/dashboard`
+      : "ws://localhost:3000/api/v1/kaizenpro/dashboard";
+
+  // 🔹 Inicializamos Socket.IO con CORS público
   const io = new Server(httpServer, {
     cors: {
-      origin: "*",
+      origin: "*", // 🌍 Permitir conexión desde cualquier origen
       methods: ["GET", "POST"],
+      credentials: false,
     },
   });
 
   // 🔹 Guardamos la instancia global (para emitir desde servicios)
   setSocketServerInstance(io);
 
-  console.log("📊 Socket.IO inicializado → Namespace: /api/v1/kaizenpro/dashboard");
+  console.log("📊 Socket.IO inicializado correctamente");
+  console.log(`🔗 Namespace activo → /api/v1/kaizenpro/dashboard`);
+  console.log(`🌍 URL WebSocket disponible en: ${baseSocketURL}`);
 
   // ===============================================================
   // NAMESPACE: /api/v1/kaizenpro/dashboard
@@ -61,16 +70,15 @@ export const initDashboardSocket = (httpServer) => {
       }
     };
 
-    // 🔹 Enviar datos iniciales al conectar
+    // Enviar datos iniciales
     await sendData();
 
-    // 🔹 Evento de desconexión
+    // Enviar datos periódicos (opcional)
+    // const interval = setInterval(sendData, 30000);
+
     socket.on("disconnect", () => {
-      const horaDesconexion = new Date().toLocaleString("es-CO", {
-        hour12: true,
-        timeZone: "America/Bogota",
-      });
-      console.log(`❌ Cliente desconectado: ${socket.user.username} a las ${horaDesconexion}`);
+      console.log(`❌ Cliente desconectado: ${socket.user.username}`);
+      // clearInterval(interval);
     });
   });
 
